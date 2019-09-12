@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # digitaldirector
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
@@ -137,3 +138,8 @@ digitaldirector$ aws s3 rb s3://BUCKET_NAME
 See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
 
 Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+||||||| merged common ancestors
+=======
+# DigitalDirector
+This is automated platform which help presenter to present the deck with Assitant
+>>>>>>> f0985b66a4bb54937f6cb3032a46d1d9c9378bfe
