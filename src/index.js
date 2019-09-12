@@ -2,9 +2,8 @@
 var request = require('request');
 var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
-//iframe link to the ppt in gslides
-const iframePre = 'https://docs.google.com/a/pwc.com/presentation/d/e/2PACX-1vTxXUOcae5fO3GcQzNDAsW0wlujgQZ8mrKyH5zw3rr7xiFMSsDwjt0LZHW7teik2Ays6NmpDhFH70VR/embed?start=false&loop=false&delayms=3000&slide=id.p';
 
+//Initialize Firebase
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://maria-ppt-bot.firebaseio.com"
@@ -24,7 +23,8 @@ function close(sessionAttributes, fulfillmentState, message) {
 
 //This function return which slide need to be displayed, if slide is not found error message will be display
 function getSlideToDisplay(slideValue, callback) {
-    var ref = admin.database().ref("presentation");
+    var db = admin.database()
+    var ref = db.ref("presentation");
     ref.once("value", function (snapshot) {
         var isValid = false;
         var slideArray = snapshot.val();
@@ -32,11 +32,9 @@ function getSlideToDisplay(slideValue, callback) {
 
         for (var index = 1; index < arrayLength; ++index) {
             var slide = slideArray[index];
-            console.log('DDD' + JSON.stringify(slide))
-            console.log('==' + slideValue)
-            let slideNumber = isNaN(slideValue) ? slideValue : slideValue.toString()
-            if (slide[0] == slideValue || (slide[1]).toLowerCase() == slideNumber) {
+            if (slide[0] == slideValue || (slide[1]).toLowerCase() == slideValue.toLowerCase()) {
                 isValid = true;
+                db.goOffline()  //Close the firebase connection
                 callback(slideArray[index])
                 break;
             }
@@ -50,10 +48,10 @@ function getSlideToDisplay(slideValue, callback) {
 
 //This function update slide to display as per user request
 function updateSlideToDisplay(slideValue, callback) {
-    var slideToDisplay = 1;
+    var db = admin.database();
     if (slideValue == 'PREVIOUS' || slideValue == 'NEXT') {
         //Get Current Slide
-        var db = admin.database()
+
         var ref = db.ref("MasterSetup");
         ref.once("value", function (snapshot) {
             var slideData = snapshot.val();
@@ -64,8 +62,11 @@ function updateSlideToDisplay(slideValue, callback) {
             if (slideValue == 'PREVIOUS') {
                 currentSlide = currentSlide - 1;
             }
-            else {
+            else if (slideValue == 'NEXT') {
                 currentSlide = currentSlide + 1;
+            }
+            else if (slideValue == 'LAST') {
+                currentSlide = slideLength;
             }
             if (currentSlide > 0 && currentSlide <= slideLength) {
 
@@ -73,9 +74,10 @@ function updateSlideToDisplay(slideValue, callback) {
 
                     if (!data.error) {
                         //Get Current Slide
-                        var dbs = admin.database()
-                        var ref = dbs.ref("MasterSetup");
-                        ref.update({ pageToDisplay: data.id });
+                        //var dbs = admin.database()
+                        db.ref("MasterSetup").ref.update({ pageToDisplay: data[0] });
+                        db.ref("MasterSetup").ref.update({ iframe: data[2] });
+                        db.goOffline();
                         callback(data);
                     }
                     else {
@@ -84,38 +86,37 @@ function updateSlideToDisplay(slideValue, callback) {
                 })
             }
             else {
-                ref.update({ pageToDisplay: prevSlide });
+                db.ref.update({ pageToDisplay: prevSlide });
                 getSlideToDisplay(prevSlide + '', function (data) {
 
                     if (!data.error) {
-                        ref.update({ pageToDisplay: data.id });
+                        db.ref.update({ pageToDisplay: data[0] });
+                        db.goOffline();
                         callback(data);
                     }
                     else {
-                        console.log('There is error');
+                        db.goOffline();
                         callback({ error: 'There is no slide to display' });
                     }
                 })
             }
         }, function (errorObject) {
-
-            console.log("The read failed: " + errorObject.code);
-            callback({ error: errorObject });
+            db.goOffline();
+            callback({ error: JSON.stringify(errorObject) });
         });
     }
     else {
         getSlideToDisplay(slideValue, function (data) {
 
             if (!data.error) {
-                console.log('I am inside function'+JSON.stringify(data))
-
-                var dbs = admin.database()
-                var ref = dbs.ref("MasterSetup");
-                ref.update({ pageToDisplay: data.id });
+                let dbs = db.ref("MasterSetup");
+                dbs.ref.update({ pageToDisplay: data[0] });
+                dbs.ref.update({ iframe: data[2] });
+                db.goOffline();
                 callback(data);
             }
             else {
-                //console.log('There is no slide to display');
+                db.goOffline();
                 callback({ error: 'There is no slide to display' });
             }
         })
@@ -123,31 +124,47 @@ function updateSlideToDisplay(slideValue, callback) {
 }
 
 
+//Handle All the Intent
 async function dispatch(intentRequest, callback) {
     const sessionAttributes = intentRequest.sessionAttributes;
-    console.log(typeof intentRequest);
-    console.log('intent name is ' + intentRequest["currentIntent"]["name"]);
     var intentName = intentRequest["currentIntent"]["name"];
-
     switch (intentName) {
-        case "HelloMaya":
+        case "NavigationIntent":
 
-            let speech = new Promise((resolve, request) => {
-                updateSlideToDisplay(3, function (data) {
-                    resolve(data)
-                    console.log(JSON.stringify(data))
+            let slots = intentRequest.currentIntent.slots;
+            let slideToDisplay = 1;
+            let ordinal = { FIRST: 1, SECOND: 2, THIRD: 3, FOURTH: 4, FIFTH: 5, SIXTH: 6, SEVENTH: 7, EIGHTH: 8, NINTH: 9, TENTH: 10 }
+
+            if (slots.Tag) { slideToDisplay = slots.Tag }
+            else if (slots.Ordinal) { slideToDisplay = slots.Ordinal }
+            else if (slots.SlideNumber) { slideToDisplay = ordinal[slots.SlideNumber] }
+            else if (slots.Navigation) { slideToDisplay = slots.Navigation }
+
+            let speech = new Promise((resolve, reject) => {
+                updateSlideToDisplay(slideToDisplay + '', function (data) {
+                    if (!data.error) {
+                        console.log('****' + JSON.stringify(data))
+                        resolve(data)
+                    }
+                    else { reject(data) }
                 })
 
             })
 
             let text = await speech;
-            console.log(JSON.stringify(text));
-            var message = {
-                "contentType": "SSML",
-                "content": text[3]
+            console.log('####' + JSON.stringify(text));
+            if (!text.error) {
+                var message = {
+                    "contentType": "SSML",
+                    "content": text[3].slice(1, -1).replace(/\\"/g, '"')
+                }
+            } else {
+                var message = {
+                    "contentType": "PlainText",
+                    "content": text.error
+                }
             }
             callback(close(sessionAttributes, 'Fulfilled', message))
-
             break;
 
         default:
@@ -167,6 +184,7 @@ async function dispatch(intentRequest, callback) {
 // Route the incoming request based on intent.
 // The JSON body of the request is provided in the event slot.
 exports.handler = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false
     console.log('INPUT JSON' + JSON.stringify(event))
     try {
         dispatch(event,
