@@ -1,12 +1,10 @@
-<<<<<<< HEAD
+
 # digitaldirector
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
-
-- hello-world - Code for the application's Lambda function.
-- events - Invocation events that you can use to invoke the function.
-- hello-world/tests - Unit tests for the application code. 
-- template.yaml - A template that defines the application's AWS resources.
+# TO BUILD AND DEPLOY RUN BELOW COMMAND ON ROOT DIRECTORY
+* sam build
+* sam package --output-template packaged.yaml --s3-bucket serverless-shreya
+* sam deploy --template-file packaged.yaml --region us-west-2 --capabilities CAPABILITY_IAM --stack-name digital-director
 
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
 
@@ -138,8 +136,3 @@ digitaldirector$ aws s3 rb s3://BUCKET_NAME
 See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
 
 Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
-||||||| merged common ancestors
-=======
-# DigitalDirector
-This is automated platform which help presenter to present the deck with Assitant
->>>>>>> f0985b66a4bb54937f6cb3032a46d1d9c9378bfe

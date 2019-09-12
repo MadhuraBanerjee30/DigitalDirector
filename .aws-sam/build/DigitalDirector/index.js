@@ -8,7 +8,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://maria-ppt-bot.firebaseio.com"
 });
-
+var db = admin.database()
 // Close dialog with the customer, reporting fulfillmentState of Failed or Fulfilled ("Thanks, your pizza will arrive in 20 minutes")
 function close(sessionAttributes, fulfillmentState, message) {
     return {
@@ -23,7 +23,6 @@ function close(sessionAttributes, fulfillmentState, message) {
 
 //This function return which slide need to be displayed, if slide is not found error message will be display
 function getSlideToDisplay(slideValue, callback) {
-    var db = admin.database()
     var ref = db.ref("presentation");
     ref.once("value", function (snapshot) {
         var isValid = false;
@@ -34,7 +33,6 @@ function getSlideToDisplay(slideValue, callback) {
             var slide = slideArray[index];
             if (slide[0] == slideValue || (slide[1]).toLowerCase() == slideValue.toLowerCase()) {
                 isValid = true;
-                db.goOffline()  //Close the firebase connection
                 callback(slideArray[index])
                 break;
             }
@@ -48,7 +46,6 @@ function getSlideToDisplay(slideValue, callback) {
 
 //This function update slide to display as per user request
 function updateSlideToDisplay(slideValue, callback) {
-    var db = admin.database();
     if (slideValue == 'PREVIOUS' || slideValue == 'NEXT') {
         //Get Current Slide
 
@@ -77,7 +74,7 @@ function updateSlideToDisplay(slideValue, callback) {
                         //var dbs = admin.database()
                         db.ref("MasterSetup").ref.update({ pageToDisplay: data[0] });
                         db.ref("MasterSetup").ref.update({ iframe: data[2] });
-                        db.goOffline();
+                        
                         callback(data);
                     }
                     else {
@@ -91,17 +88,17 @@ function updateSlideToDisplay(slideValue, callback) {
 
                     if (!data.error) {
                         db.ref.update({ pageToDisplay: data[0] });
-                        db.goOffline();
+                        
                         callback(data);
                     }
                     else {
-                        db.goOffline();
+                        
                         callback({ error: 'There is no slide to display' });
                     }
                 })
             }
         }, function (errorObject) {
-            db.goOffline();
+            
             callback({ error: JSON.stringify(errorObject) });
         });
     }
@@ -112,11 +109,11 @@ function updateSlideToDisplay(slideValue, callback) {
                 let dbs = db.ref("MasterSetup");
                 dbs.ref.update({ pageToDisplay: data[0] });
                 dbs.ref.update({ iframe: data[2] });
-                db.goOffline();
+                
                 callback(data);
             }
             else {
-                db.goOffline();
+                
                 callback({ error: 'There is no slide to display' });
             }
         })
@@ -136,10 +133,11 @@ async function dispatch(intentRequest, callback) {
             let ordinal = { FIRST: 1, SECOND: 2, THIRD: 3, FOURTH: 4, FIFTH: 5, SIXTH: 6, SEVENTH: 7, EIGHTH: 8, NINTH: 9, TENTH: 10 }
 
             if (slots.Tag) { slideToDisplay = slots.Tag }
-            else if (slots.Ordinal) { slideToDisplay = slots.Ordinal }
-            else if (slots.SlideNumber) { slideToDisplay = ordinal[slots.SlideNumber] }
+            else if (slots.Ordinal) { slideToDisplay = ordinal[slots.Ordinal] }
+            else if (slots.SlideNumber) { slideToDisplay = slots.SlideNumber }
             else if (slots.Navigation) { slideToDisplay = slots.Navigation }
 
+            console.log('***SLIDE TO DISPLAY****' + slideToDisplay)
             let speech = new Promise((resolve, reject) => {
                 updateSlideToDisplay(slideToDisplay + '', function (data) {
                     if (!data.error) {
@@ -164,6 +162,7 @@ async function dispatch(intentRequest, callback) {
                     "content": text.error
                 }
             }
+            db.goOffline()
             callback(close(sessionAttributes, 'Fulfilled', message))
             break;
 
