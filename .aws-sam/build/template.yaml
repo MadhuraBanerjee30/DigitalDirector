@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Digital Director Sample
+Globals:
+  Function:
+    Timeout: 3
+Outputs:
+  DigitalDirector:
+    Description: DigitalDirector Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - DigitalDirector
+      - Arn
+  DigitalDirectorApi:
+    Description: API Gateway endpoint URL for Prod stage for DigitalDirector
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+  DigitalDirectorIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+      - DigitalDirectorRole
+      - Arn
+Resources:
+  DigitalDirector:
+    Properties:
+      CodeUri: DigitalDirector
+      Events:
+        DigitalDirector:
+          Properties:
+            Method: get
+            Path: /hello
+          Type: Api
+      Handler: index.handler
+      Runtime: nodejs10.x
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
