@@ -23,7 +23,7 @@ Outputs:
 Resources:
   DigitalDirector:
     Properties:
-      CodeUri: s3://serverless-shreya/6eaac42b3b5df47be3c9afc68ce8ac51
+      CodeUri: s3://serverless-shreya/6d1a4db98f7a3807c718723bcfa66a65
       Events:
         DigitalDirector:
           Properties:

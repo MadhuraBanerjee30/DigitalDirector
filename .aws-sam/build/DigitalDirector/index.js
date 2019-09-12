@@ -46,15 +46,15 @@ function getSlideToDisplay(slideValue, callback) {
 
 //This function update slide to display as per user request
 function updateSlideToDisplay(slideValue, callback) {
-    if (slideValue == 'PREVIOUS' || slideValue == 'NEXT') {
+    if (slideValue == 'PREVIOUS' || slideValue == 'NEXT' || slideValue == 'LAST') {
         //Get Current Slide
 
-        var ref = db.ref("MasterSetup");
+        var ref = db.ref("/");
         ref.once("value", function (snapshot) {
             var slideData = snapshot.val();
-            var currentSlide = slideData.pageToDisplay;
+            var currentSlide = slideData.MasterSetup.pageToDisplay;
             var prevSlide = currentSlide;
-            var slideLength = slideData.slides.length;
+            var slideLength = slideData.presentation.length - 1;
 
             if (slideValue == 'PREVIOUS') {
                 currentSlide = currentSlide - 1;
@@ -74,7 +74,7 @@ function updateSlideToDisplay(slideValue, callback) {
                         //var dbs = admin.database()
                         db.ref("MasterSetup").ref.update({ pageToDisplay: data[0] });
                         db.ref("MasterSetup").ref.update({ iframe: data[2] });
-                        
+
                         callback(data);
                     }
                     else {
@@ -88,17 +88,17 @@ function updateSlideToDisplay(slideValue, callback) {
 
                     if (!data.error) {
                         db.ref.update({ pageToDisplay: data[0] });
-                        
+
                         callback(data);
                     }
                     else {
-                        
+
                         callback({ error: 'There is no slide to display' });
                     }
                 })
             }
         }, function (errorObject) {
-            
+
             callback({ error: JSON.stringify(errorObject) });
         });
     }
@@ -109,11 +109,11 @@ function updateSlideToDisplay(slideValue, callback) {
                 let dbs = db.ref("MasterSetup");
                 dbs.ref.update({ pageToDisplay: data[0] });
                 dbs.ref.update({ iframe: data[2] });
-                
+
                 callback(data);
             }
             else {
-                
+
                 callback({ error: 'There is no slide to display' });
             }
         })
@@ -183,11 +183,11 @@ async function dispatch(intentRequest, callback) {
 // Route the incoming request based on intent.
 // The JSON body of the request is provided in the event slot.
 exports.handler = (event, context, callback) => {
-    context.callbackWaitsForEmptyEventLoop = false
     console.log('INPUT JSON' + JSON.stringify(event))
+    context.callbackWaitsForEmptyEventLoop = false
     try {
         dispatch(event,
-            (response) => {
+            (response) => {  
                 callback(null, response);
             });
     } catch (err) {
