@@ -72,8 +72,9 @@ function updateSlideToDisplay(slideValue, callback) {
                     if (!data.error) {
                         //Get Current Slide
                         //var dbs = admin.database()
-                        db.ref("MasterSetup").ref.update({ pageToDisplay: data[0] });
-                        db.ref("MasterSetup").ref.update({ iframe: data[2] });
+                        let dba = db.ref("MasterSetup"); 
+                        dba.ref.update({ pageToDisplay: data[0] , iframe: data[2] });
+                        console.log("***iframe update1***", + data[2]);
 
                         callback(data);
                     }
@@ -88,8 +89,9 @@ function updateSlideToDisplay(slideValue, callback) {
                 getSlideToDisplay(prevSlide + '', function (data) {
 
                     if (!data.error) {
-                        db.ref.update({ pageToDisplay: data[0] });
-
+                        let bd = db.ref("MasterSetup");
+                        bd.ref.update({ pageToDisplay: data[0] , iframe: data[2] });
+                        console.log("***iframe update2***", + data[2]);
                         callback(data);
                     }
                     else {
@@ -108,8 +110,8 @@ function updateSlideToDisplay(slideValue, callback) {
 
             if (!data.error) {
                 let dbs = db.ref("MasterSetup");
-                dbs.ref.update({ pageToDisplay: data[0] });
-                dbs.ref.update({ iframe: data[2] });
+                dbs.ref.update({ pageToDisplay: data[0] , iframe: data[2] });
+                console.log("***iframe update3***" + data[2].toString());
 
                 callback(data);
             }
@@ -163,8 +165,8 @@ async function dispatch(intentRequest, callback) {
                     "content": text.error
                 }
             }
-            db.goOffline()
             callback(close(sessionAttributes, 'Fulfilled', message))
+            db.goOffline()
             break;
 
         default:
