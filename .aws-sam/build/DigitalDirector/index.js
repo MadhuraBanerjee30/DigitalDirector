@@ -79,6 +79,7 @@ function updateSlideToDisplay(slideValue, callback) {
                     }
                     else {
                         console.log('There is error');
+                        callback({ error: 'There is error' })
                     }
                 })
             }
@@ -128,7 +129,7 @@ async function dispatch(intentRequest, callback) {
     switch (intentName) {
         case "NavigationIntent":
 
-            let slots = intentRequest.currentIntent.slots;
+            var slots = intentRequest.currentIntent.slots;
             let slideToDisplay = 1;
             let ordinal = { FIRST: 1, SECOND: 2, THIRD: 3, FOURTH: 4, FIFTH: 5, SIXTH: 6, SEVENTH: 7, EIGHTH: 8, NINTH: 9, TENTH: 10 }
 
@@ -154,7 +155,7 @@ async function dispatch(intentRequest, callback) {
             if (!text.error) {
                 var message = {
                     "contentType": "SSML",
-                    "content": text[3].slice(1, -1).replace(/\\"/g, '"')
+                    "content": text[3].trim().replace(/\\"/g, '"')
                 }
             } else {
                 var message = {
@@ -187,7 +188,7 @@ exports.handler = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false
     try {
         dispatch(event,
-            (response) => {  
+            (response) => {
                 callback(null, response);
             });
     } catch (err) {
