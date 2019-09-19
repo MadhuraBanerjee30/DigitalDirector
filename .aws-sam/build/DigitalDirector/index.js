@@ -4,10 +4,12 @@ var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
 
 //Initialize Firebase
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://maria-ppt-bot.firebaseio.com"
-});
+if (admin.apps.length == 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: "https://maria-ppt-bot.firebaseio.com"
+    });
+}
 var db = admin.database()
 // Close dialog with the customer, reporting fulfillmentState of Failed or Fulfilled ("Thanks, your pizza will arrive in 20 minutes")
 function close(sessionAttributes, fulfillmentState, message) {
@@ -15,6 +17,16 @@ function close(sessionAttributes, fulfillmentState, message) {
         sessionAttributes,
         dialogAction: {
             type: 'Close',
+            fulfillmentState: fulfillmentState,
+            message: message,
+        },
+    };
+}
+function ConfirmIntent(sessionAttributes, fulfillmentState, message) {
+    return {
+        sessionAttributes,
+        dialogAction: {
+            type: 'ConfirmIntent',
             fulfillmentState: fulfillmentState,
             message: message,
         },
@@ -72,10 +84,9 @@ function updateSlideToDisplay(slideValue, callback) {
                     if (!data.error) {
                         //Get Current Slide
                         //var dbs = admin.database()
-                        let dba = db.ref("MasterSetup"); 
-                        dba.ref.update({ pageToDisplay: data[0] , iframe: data[2] });
-                        console.log("***iframe update1***", + data[2]);
-
+                        let dba = db.ref("MasterSetup");
+                        dba.ref.update({ pageToDisplay: data[0], iframe: data[2] });
+                        console.log("***iframe update1***" + data[2]);
                         callback(data);
                     }
                     else {
@@ -90,8 +101,8 @@ function updateSlideToDisplay(slideValue, callback) {
 
                     if (!data.error) {
                         let bd = db.ref("MasterSetup");
-                        bd.ref.update({ pageToDisplay: data[0] , iframe: data[2] });
-                        console.log("***iframe update2***", + data[2]);
+                        bd.ref.update({ pageToDisplay: data[0], iframe: data[2] });
+                        console.log("***iframe update2***" + data[2]);
                         callback(data);
                     }
                     else {
@@ -110,9 +121,8 @@ function updateSlideToDisplay(slideValue, callback) {
 
             if (!data.error) {
                 let dbs = db.ref("MasterSetup");
-                dbs.ref.update({ pageToDisplay: data[0] , iframe: data[2] });
+                dbs.ref.update({ pageToDisplay: data[0], iframe: data[2] });
                 console.log("***iframe update3***" + data[2].toString());
-
                 callback(data);
             }
             else {
@@ -127,6 +137,7 @@ function updateSlideToDisplay(slideValue, callback) {
 //Handle All the Intent
 async function dispatch(intentRequest, callback) {
     const sessionAttributes = intentRequest.sessionAttributes;
+    let speechToText = '<speak>Sure</speak>';
     var intentName = intentRequest["currentIntent"]["name"];
     switch (intentName) {
         case "NavigationIntent":
@@ -135,9 +146,43 @@ async function dispatch(intentRequest, callback) {
             let slideToDisplay = 1;
             let ordinal = { FIRST: 1, SECOND: 2, THIRD: 3, FOURTH: 4, FIFTH: 5, SIXTH: 6, SEVENTH: 7, EIGHTH: 8, NINTH: 9, TENTH: 10 }
 
-            if (slots.Tag) { slideToDisplay = slots.Tag }
+
+            if (slots.Tag) {slideToDisplay = slots.Tag }
             else if (slots.Ordinal) { slideToDisplay = ordinal[slots.Ordinal] }
-            else if (slots.SlideNumber) { slideToDisplay = slots.SlideNumber }
+            else if (slots.SlideNumber) {
+                slideToDisplay = slots.SlideNumber
+
+                //In Testing
+                let speech = new Promise((resolve, reject) => {
+                    getSlideToDisplay(slideToDisplay, (data) => {
+                        if (!data.error) {
+                            resolve(data);
+                        }
+                        else {
+                            reject(data);
+                        }
+                    })
+                });
+
+                let tts = await speech;
+                console.log('$$$' + JSON.stringify(tts));
+                if (!tts.error) {
+                    var followUp = tts[1].trim().replace(/\\"/g, '"');
+                    var message = {
+                        "contentType": "SSML",
+                        "content": 'Are you sure you want to go to ' + followUp + ' Slide?'
+                    }
+                } else {
+                    var message = {
+                        "contentType": "PlainText",
+                        "content": tts.error
+                    }
+                }
+                sessionAttributes.slideToDisplay = tts[1].trim().replace(/\\"/g, '"');
+                callback(ConfirmIntent(sessionAttributes, 'Fulfilled', message))
+
+
+            }
             else if (slots.Navigation) { slideToDisplay = slots.Navigation }
 
             console.log('***SLIDE TO DISPLAY****' + slideToDisplay)
@@ -155,15 +200,25 @@ async function dispatch(intentRequest, callback) {
             let text = await speech;
             console.log('####' + JSON.stringify(text));
             if (!text.error) {
-                var message = {
-                    "contentType": "SSML",
-                    "content": text[3].trim().replace(/\\"/g, '"')
+                if (slots.Back === 'back' && (slots.Ordinal || slots.SlideNumber || slots.Tag || slots.Navigation)) {
+
+                    var message = {
+                        "contentType": "SSML",
+                        "content": speechToText
+                    }
+                }
+                else {
+                    var message = {
+                        "contentType": "SSML",
+                        "content": text[3].trim().replace(/\\"/g, '"')
+                    }
                 }
             } else {
                 var message = {
                     "contentType": "PlainText",
                     "content": text.error
                 }
+
             }
             callback(close(sessionAttributes, 'Fulfilled', message))
             db.goOffline()
