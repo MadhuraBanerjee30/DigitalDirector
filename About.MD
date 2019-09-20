@@ -10,6 +10,7 @@ The individual developed to virtually demonstrate a presentation is named Maya. 
 # How To Use It
 
 # Who Will Use It
+Business professionals who wish to make important meetings and interactions an automated experience are the foremost users of the Digital Director. 
 
 # Architecture
 
