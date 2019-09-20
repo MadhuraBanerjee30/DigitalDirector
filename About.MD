@@ -24,4 +24,4 @@ Here are a few highlights of the specific functionalities implemented by the abo
   ### _Lambda Processing_
   ### _Fire-Base_
   ### _HTML components_ 
-  ### _Google Slides and Google Sheets_ 
+ 
