@@ -14,6 +14,7 @@ Business professionals who wish to make important meetings and interactions an a
 
 # Architecture
 
+
 # Technology Used
 The following technology tools and platforms are used to implement the Digital Director:
 * AWS Sumerian
