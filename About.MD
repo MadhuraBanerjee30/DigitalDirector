@@ -21,4 +21,7 @@ The following technology tools and platforms are used to implement the Digital D
 Here are a few highlights of the specific functionalities implemented by the above. 
   ### _AWS Sumerian_
   ### _Amazon Lex_
+  ### _Lambda Processing_
+  ### _Fire-Base_
   ### _HTML components_ 
+  ### _Google Slides and Google Sheets_ 
