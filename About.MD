@@ -7,15 +7,6 @@ The individual developed to virtually demonstrate a presentation is named Maya. 
 * Jumping to a specific slide as requested by the user
 * Reading specific information from a slide
 
-# How To Use It
-
-# Who Will Use It
-Business professionals who wish to make important meetings and interactions an automated experience are the foremost users of the Digital Director. 
-
-# Architecture
-![Architecture](Capture.PNG)
-![Components](Capture1.PNG)
-
 # Technology Used
 The following technology tools and platforms are used to implement the Digital Director:
 * AWS Sumerian
@@ -31,4 +22,12 @@ Here are a few highlights of the specific functionalities implemented by the abo
   ### _Lambda Processing_
   ### _Fire-Base_
   ### _HTML components_ 
+
+# Architecture
+![Architecture](Capture.PNG)
+![Components](Capture1.PNG)
  
+ # How To Use It
+
+ # Who Will Use It
+Business professionals who wish to make important meetings and interactions an automated experience are the foremost users of the Digital Director. 
