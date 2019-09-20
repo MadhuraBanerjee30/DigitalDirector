@@ -17,7 +17,10 @@ The individual developed to virtually demonstrate a presentation is named Maya. 
 The following technology tools and platforms are used to implement the Digital Director:
 * AWS Sumerian
 * Amazon Lex
+* Lambda Processing
+* Fire-Base
 * HTML
+<br/> 
 Here are a few highlights of the specific functionalities implemented by the above. 
   ### _AWS Sumerian_
   ### _Amazon Lex_
