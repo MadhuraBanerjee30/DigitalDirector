@@ -13,8 +13,8 @@ The individual developed to virtually demonstrate a presentation is named Maya. 
 Business professionals who wish to make important meetings and interactions an automated experience are the foremost users of the Digital Director. 
 
 # Architecture
-![Architecture](CAPTURE.png)
-![Components](CAPTURE1.png)
+![Architecture](Capture.PNG)
+![Components](Capture1.PNG)
 
 # Technology Used
 The following technology tools and platforms are used to implement the Digital Director:
