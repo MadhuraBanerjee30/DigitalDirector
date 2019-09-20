@@ -1,6 +1,6 @@
 # Introduction
 Every new business relation needs a round of communications. Communication is made more effective with the use of visual tools, and specifically, presentations. Professing information from a presentation involves conveying relevant data and answering questions related to it. A new frontier in technology explores these features of communication by building a virtual director, that integrates augmented reality tools, and virtually demonstrates a presentation. 
-## _Maya - The Digital Director_
+  ## _Maya - The Digital Director_
 The individual developed to virtually demonstrate a presentation is named Maya. Maya serves as the Digital Director, responsible for the following functionalities:
 * Reading from the current slide
 * Changing the slides chronologically
@@ -19,6 +19,6 @@ The following technology tools and platforms are used to implement the Digital D
 * Amazon Lex
 * HTML
 Here are a few highlights of the specific functionalities implemented by the above. 
-### _AWS Sumerian_
-### _Amazon Lex_
-### _HTML components_ 
+  ### _AWS Sumerian_
+  ### _Amazon Lex_
+  ### _HTML components_ 
