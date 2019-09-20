@@ -19,6 +19,6 @@ The following technology tools and platforms are used to implement the Digital D
 * Amazon Lex
 * HTML
 Here are a few highlights of the specific functionalities implemented by the above. 
-#### _AWS Sumerian_
-#### _Amazon Lex_
-#### _HTML components_ 
+### _AWS Sumerian_
+### _Amazon Lex_
+### _HTML components_ 
