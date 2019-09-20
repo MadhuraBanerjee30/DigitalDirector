@@ -20,8 +20,9 @@ The following technology tools and platforms are used to implement the Digital D
 * Lambda Processing
 * Fire-Base
 * HTML
-<br/> 
-Here are a few highlights of the specific functionalities implemented by the above. 
+
+Here are a few highlights of the specific functionalities implemented by the above.
+
   ### _AWS Sumerian_
   ### _Amazon Lex_
   ### _Lambda Processing_
