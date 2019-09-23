@@ -11,7 +11,7 @@ The individual developed to virtually demonstrate a presentation is named Maya. 
 The following technology tools and platforms are used to implement the Digital Director:
 * AWS Sumerian
 * Amazon Lex
-* Lambda Processing
+* Lambda 
 * Fire-Base
 * HTML
 
@@ -21,9 +21,12 @@ Here are a few highlights of the specific functionalities implemented by the abo
   AWS Sumerian is the augmented reality platform presented by Amazon. The required components or 'assets', such as furniture, light, etc. are integrated into a particular scene. The development platform also provides provision to customize the qualities of these components, such as the angular orientation of the objects or the brightness of the lights. 
   ### _Amazon Lex_
   Amazon Lex provides the semantic tools for the effective functionalities of the Digital Director. It is used for building a conversational interface using voice and text. 
-  ### _Lambda Processing_
+  ### _Lambda_
+  The back-end operations are achieved using Lambda code. 
   ### _Fire-Base_
+  Fire-Base serves as a platform for storing data. 
   ### _HTML components_ 
+  The better represent the look and feel of the application, HTML components are used to enhance the front-end operations. 
 
 # Architecture
 ![Architecture](Capture.PNG)
