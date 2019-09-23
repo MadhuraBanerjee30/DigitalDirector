@@ -18,7 +18,9 @@ The following technology tools and platforms are used to implement the Digital D
 Here are a few highlights of the specific functionalities implemented by the above.
 
   ### _AWS Sumerian_
+  AWS Sumerian is the augmented reality platform presented by Amazon. The required components or 'assets', such as furniture, light, etc. are integrated into a particular scene. The development platform also provides provision to customize the qualities of these components, such as the angular orientation of the objects or the brightness of the lights. 
   ### _Amazon Lex_
+  Amazon Lex provides the semantic tools for the effective functionalities of the Digital Director. It is used for building a conversational interface using voice and text. 
   ### _Lambda Processing_
   ### _Fire-Base_
   ### _HTML components_ 
